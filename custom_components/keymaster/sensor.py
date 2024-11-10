@@ -1,8 +1,9 @@
 """Sensor for keymaster."""
 
+from collections.abc import Mapping
 from functools import partial
 import logging
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -105,6 +106,13 @@ class CodesSensor(CoordinatorEntity, SensorEntity):
         self._attr_extra_state_attributes = {ATTR_CODE_SLOT: self._code_slot}
         self._attr_name = f"{self.primary_lock.lock_name}: {self._name}"
         self._attr_unique_id = slugify(self._attr_name)
+        self.ent_reg = async_get_entity_registry(self.hass)
+        self._attr_device_info: Mapping[str, Any] = {
+            "identifiers": {
+                (DOMAIN, self.ent_reg.async_get(self.primary_lock.lock_entity_id))
+            },
+            "name": self.primary_lock.lock_name,
+        }
 
     @property
     def native_value(self) -> Optional[str]:
@@ -113,5 +121,7 @@ class CodesSensor(CoordinatorEntity, SensorEntity):
 
     @property
     def available(self) -> bool:
+        """Return whether sensor is available or not."""
+        return self._code_slot in self.coordinator.data
         """Return whether sensor is available or not."""
         return self._code_slot in self.coordinator.data

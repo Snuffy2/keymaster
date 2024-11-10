@@ -1,7 +1,8 @@
 """Sensor for keymaster."""
 
+from collections.abc import Mapping
 import logging
-from typing import List
+from typing import Any, List
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -66,6 +67,13 @@ class BaseNetworkReadySensor(BinarySensorEntity):
         self._attr_unique_id = slugify(self._attr_name)
         self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
         self._attr_should_poll = False
+        self.ent_reg = async_get_entity_registry(self.hass)
+        self._attr_device_info: Mapping[str, Any] = {
+            "identifiers": {
+                (DOMAIN, self.ent_reg.async_get(self.primary_lock.lock_entity_id))
+            },
+            "name": self.primary_lock.lock_name,
+        }
 
     @callback
     def async_set_is_on_property(
