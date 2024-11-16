@@ -353,8 +353,8 @@ class KeymasterCoordinator(DataUpdateCoordinator):
         if not isinstance(slot, KeymasterCodeSlot) or not slot.enabled:
             return False
 
-        if not slot.accesslimit:
-            return True
+        # if not slot.accesslimit:
+        #     return True
 
         # TODO: Build the rest of the access limit logic
         return True

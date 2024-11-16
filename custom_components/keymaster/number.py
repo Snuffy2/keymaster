@@ -71,7 +71,7 @@ async def async_setup_entry(
             KeymasterNumber(
                 entity_description=KeymasterNumberEntityDescription(
                     key=f"number.code_slots:{x}.accesslimit_count",
-                    name=f"Unlock Events {x}",
+                    name=f"Uses Remaining",
                     mode=NumberMode.BOX,
                     native_min_value=0,
                     native_max_value=100,
@@ -138,7 +138,7 @@ class KeymasterNumber(KeymasterEntity, NumberEntity):
             and not self._kmlock.code_slots[self._code_slot].override_parent
         ):
             _LOGGER.debug(
-                f"[async_set_value] {self._kmlock.lock_name}: Child lock and code slot {self._code_slot} not set to override parent. Ignoring change"
+                f"[Number async_set_value] {self._kmlock.lock_name}: Child lock and code slot {self._code_slot} not set to override parent. Ignoring change"
             )
             return
         if self._set_property_value(value):
